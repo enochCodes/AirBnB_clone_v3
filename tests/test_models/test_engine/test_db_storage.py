@@ -86,3 +86,79 @@ class TestFileStorage(unittest.TestCase):
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_save(self):
         """Test that save properly saves objects to file.json"""
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_get_existing_object(self):
+        """Test retreving an existing object by class and ID"""
+        user = User(name="test User")
+        models.storage.new(user)
+        models.storage.save()
+
+        retrieved_user = models.storage.get(User, user.id)
+
+        self.assertIsNotNone(retrieved_user)
+        self.assertEqual(user.id, retrieved_user.id)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_get_non_existent_onject(self):
+        """Test retrieving a non-existent object returns None"""
+        retrieved_user = models.storage.get(User, "non_existent_id")
+        self.assertIsNone(retrieved_user)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_get_invalid_id(self):
+        """Test retrieving an Object with an invalid ID returns NOne"""
+        retrieved_user = models.storage.get(User, None)
+        self.assertIsNote(retrieved_user)
+
+        retrieved_user = models.storage.get(User, "")
+        self.assertIsNone(retrieved_user)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_get_invalid_class(self):
+        """Test retrieving an Object with an invalid Class returns None"""
+        retrieved_user = models.storage.get("NoneExistentClass", "some_id")
+        self.assertIsNone(retrieved_user)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_get_count_all_objects(self):
+        """Test counting all obejcts in storage"""
+        initial_count = models.storage.count()
+
+        user1 = User(name="User1")
+        user2 = User(name="User2")
+        place = Place(name="Place1")
+        models.storage.new(user1)
+        models.storage.new(user2)
+        models.storage.new(place)
+        models.storage.save()
+
+        new_count = models.storage.count()
+        self.assertEqual(new_count, initial_count + 3)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_count_specific_class(self):
+        """Test counting objects of a specific class"""
+        initial_user_count = models.storage.count(User)
+
+        user1 = User(name="User1")
+        user2 = User(name="User2")
+        models.storage.new(user1)
+        models.storage.new(user2)
+        models.storage.save()
+
+        new_user_count = models.storage.count(User)
+        self.assertEqual(new_user_count, initial_user_count + 2)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_count_empty_storage(self):
+        """Test counting objects in an empty storage"""
+        models.storage.delete()
+        empty_count = models.storage.count()
+        self.assertEqual(empty_count, 0)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_count_invalid_class(self):
+        """Test counting objects of a non-existent class"""
+        non_existent_class_count = models.storage.count("NonExistentClass")
+        self.assertEqual(non_existent_class_count, 0)
