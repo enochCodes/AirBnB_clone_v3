@@ -81,7 +81,7 @@ class DBStorage:
         """Retrieve Number of Objects in Storage by class and ID"""
         if cls is None:
             total_count = 0
-            for cls in self.__session.query()._decl_class_registry.values():
+            for cls in classes.values():
                 if hasattr(cls, '__tablename__'):
                     total_count += self.__session.query(cls).count()
             return total_count
