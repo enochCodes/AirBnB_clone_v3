@@ -146,3 +146,65 @@ class TestFileStorage(unittest.TestCase):
     def test_get_invalid_class(self):
         """Test invalid Class format"""
         self.assertIsNone(models.storage.get('NonExistentclass', 'some_id'))
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_count_all_objects(self):
+        """Clear storage test"""
+        FileStorage._FileStorage__objects.clear()
+
+        user = User()
+        place = Place()
+        base_model = BaseModel()
+
+        models.storage.new(user)
+        models.storage.new(place)
+        models.storage.new(base_model)
+        models.storage.save()
+
+        total_count = models.storage.count()
+
+        self.assertEqual(total_count, 3, "count() return 3")
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_count_specific_class(self):
+        """Clear storage"""
+        FileStorage._FileStorage__objects.clear()
+
+        user1 = User()
+        user2 = User()
+        place = Place()
+
+        models.storage.new(user1)
+        models.storage.new(user2)
+        models.storage.new(place)
+        models.storage.save()
+
+        user_count = models.storage.count(User)
+        self.assertEqual(user_count, 2, "count(User) should return 2")
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_count_empty_storage(self):
+        """Clear storage"""
+        FileStorage._FileStorage__objects.clear()
+
+        total_count = models.storage.count()
+        user_count = models.storage.count(User)
+
+        self.assertEqual(total_count, 0, "count() should return 0")
+        self.assertEqual(user_count, 0, "count(User) should return 0")
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_count_no_instances_of_class(self):
+        """clear storage"""
+        FileStorage._FileStorage__objects.clear()
+
+        place = Place()
+        base_model = BaseModel()
+
+        models.storage.new(place)
+        models.storage.new(base_model)
+        models.storage.save()
+
+        user_count = models.storage.count(User)
+
+        self.assertEqual(user_count, 0, "co")
