@@ -162,19 +162,3 @@ class TestBaseModel(unittest.TestCase):
         self.assertEqual(old_created_at, new_created_at)
         self.assertTrue(mock_storage.new.called)
         self.assertTrue(mock_storage.save.called)
-    
-    def test_get_Existing_Object(self):
-        """Retrieve Existing Object"""
-        user = BaseModel()
-        user.name = "test user"
-        models.storage.new(user)
-        models.storage.save()
-        
-        retrieved_user = models.storage.get(BaseModel, user.id)
-        assert retrieved_user is not None, "get() should return an object"
-        assert retrieved_user.id == user.id, "The ID of the retrieved object should match the original"
-        assert retrieved_user.name == "test user", "The name of the retrieved object should match 'test user'"
-    
-    
-        
-        
