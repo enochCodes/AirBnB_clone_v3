@@ -113,3 +113,36 @@ class TestFileStorage(unittest.TestCase):
         with open("file.json", "r") as f:
             js = f.read()
         self.assertEqual(json.loads(string), json.loads(js))
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_get_existing_object(self):
+        """Test Retrieve Existing Object"""
+        user = BaseModel()
+        user.name = "test user"
+        models.storage.new(user)
+        models.storage.save()
+
+        retrieved_user = models.storage.get(BaseModel, user.id)
+
+        self.assertIsNotNone(retrieved_user, "get() should return an object")
+        self.assertEqual(retrieved_user.id, user.id, "The ID should match")
+        self.assertEqual(retrieved_user.name, "test user", "name should match")
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_get_non_existing_object(self):
+        """Test non existing object"""
+        retrieved_user = models.storage.get(BaseModel, 'non_existent_id')
+
+        self.assertIsNone(retrieved_user, "get() should return None")
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_get_invalid_id_format(self):
+        """Test invalid ID format"""
+        self.assertIsNone(models.storage.get(BaseModel, None), "get()")
+        self.assertIsNone(models.storage.get(BaseModel, ''), "get()")
+        self.assertIsNone(models.storage.get(BaseModel, '!!@@##'), "get()")
+
+    @unittest .skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_get_invalid_class(self):
+        """Test invalid Class format"""
+        self.assertIsNone(models.storage.get('NonExistentclass', 'some_id'))
