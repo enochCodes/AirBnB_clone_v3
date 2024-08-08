@@ -4,7 +4,7 @@ Flask web application entry point.
 """
 from flask import Flask
 from models import storage
-from api.v1.views import app_views
+from views import app_views
 import os
 
 
