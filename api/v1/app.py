@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+"""Srart Api"""
 from flask import Flask
 from models import storage
 from api.v1.views import app_views
@@ -11,6 +12,9 @@ app.register_blueprint(app_views)
 
 @app.teardown_appcontext
 def teardown(exception):
+    """
+        teardown
+    """
     storage.close()
 
 
