@@ -1,29 +1,29 @@
 #!/usr/bin/python3
+"""Flask server (variable app)
 """
-Flask web application entry point.
-"""
-from flask import Flask
-from models import storage
-from views import app_views
-import os
 
+
+from flask import Flask, jsonify
+from models import storage
+from os import getenv
+from api.v1.views import app_views
 
 app = Flask(__name__)
 app.register_blueprint(app_views)
+app.url_map.strict_slashes = False
 
 
 @app.teardown_appcontext
-def teardown(exception):
-    """
-      Handle teardown of the application context.
-    """
+def downtear(self):
+    '''Status of your API'''
     storage.close()
 
 
 if __name__ == "__main__":
-    """
-    Main entry point for running the Flask application.
-    """
-    host = os.getenv('HBNB_API_HOST', '0.0.0.0')
-    port = int(os.getenv('HBNB_API_PORT', '5000'))
+    host = getenv('HBNB_API_HOST')
+    port = getenv('HBNB_API_PORT')
+    if not host:
+        host = '0.0.0.0'
+    if not port:
+        port = '5000'
     app.run(host=host, port=port, threaded=True)
