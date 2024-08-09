@@ -12,6 +12,7 @@ def returnstuff():
     '''return stuff'''
     return jsonify(status='OK')
 
+
 @app_views.route('/stats', methods=['GET'], strict_slashes=False)
 def get_stats():
     """
@@ -19,7 +20,7 @@ def get_stats():
     """
     stats = {
             'amenities': Amenity, 'users': User,
-            'states': State, 'cities':City,
+            'states': State, 'cities': City,
             'places': Place, 'reviews': Review}
     for key in stats:
         stats[key] = storage.count(stats[key])
